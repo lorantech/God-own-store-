@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Cormorant_Garamond, Cinzel, Jost } from 'next/font/google'
 import './globals.css'
 import { CartProvider } from '@/context/CartContext'
 import { ShopUIProvider } from '@/context/ShopUIContext'
@@ -13,27 +12,6 @@ import VariantPickerModal from '@/components/ui/VariantPickerModal'
 import CompareBar from '@/components/ui/CompareBar'
 import { Toaster } from 'react-hot-toast'
 
-const cormorant = Cormorant_Garamond({ 
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-cormorant'
-})
-
-const cinzel = Cinzel({ 
-  subsets: ['latin'],
-  weight: ['400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-cinzel'
-})
-
-const jost = Jost({ 
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  display: 'swap',
-  variable: '--font-jost'
-})
-
 export const metadata: Metadata = {
   title: 'GODS OWN STORE | Dealer in All Kind of Jewelries',
   description: 'Luxury jewelry store - Necklaces, Rings, Bracelets, Earrings, Watches & Customised Jewelry',
@@ -45,8 +23,16 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={cormorant.variable}>
-      <body className={`${cinzel.variable} ${jost.variable}`}>
+    <html lang="en">
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Cormorant+Garamond:wght@400;500;600;700&family=Jost:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </head>
+      <body>
         <AdminAuthProvider>
           <CartProvider>
             <ShopUIProvider>
