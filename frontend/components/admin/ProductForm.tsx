@@ -21,6 +21,8 @@ export default function ProductForm({ product, onSubmit, onCancel }: ProductForm
     price: product?.price || 0,
     discountPrice: product?.discountPrice ?? '',
     category: product?.category || defaultCategories[0],
+    color: product?.color || '',
+    variantGroup: product?.variantGroup || '',
     images: product?.images || [],
     sizes: product?.sizes || '',
     featured: product?.featured || false,
@@ -40,7 +42,13 @@ export default function ProductForm({ product, onSubmit, onCancel }: ProductForm
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit({ ...formData, price: Number(formData.price), discountPrice: formData.discountPrice === '' ? undefined : Number(formData.discountPrice) });
+    onSubmit({
+      ...formData,
+      color: formData.color.trim(),
+      variantGroup: formData.variantGroup.trim(),
+      price: Number(formData.price),
+      discountPrice: formData.discountPrice === '' ? undefined : Number(formData.discountPrice),
+    });
   };
 
   const addImage = (url: string) => setFormData((s) => ({ ...s, images: [...s.images, url] }));
@@ -62,6 +70,27 @@ export default function ProductForm({ product, onSubmit, onCancel }: ProductForm
         <Field label="Discount Price (optional)"><input type="number" min={0} value={formData.discountPrice} onChange={(e) => setFormData({ ...formData, discountPrice: e.target.value })} className="inp" /></Field>
         <Field label="Sizes / Specifications"><input type="text" value={formData.sizes} onChange={(e) => setFormData({ ...formData, sizes: e.target.value })} className="inp" placeholder="e.g. 16, 18, 20" /></Field>
       </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Field label="Color / Design name">
+          <input
+            type="text"
+            value={formData.color}
+            onChange={(e) => setFormData({ ...formData, color: e.target.value })}
+            className="inp"
+            placeholder="e.g. Gold, Silver, Rose Gold"
+          />
+        </Field>
+        <Field label="Variant Group ID/name">
+          <input
+            type="text"
+            value={formData.variantGroup}
+            onChange={(e) => setFormData({ ...formData, variantGroup: e.target.value })}
+            className="inp"
+            placeholder="e.g. luxury-ring-classic"
+          />
+        </Field>
+      </div>
+      <p className="text-xs text-textSecondary -mt-2">Products sharing the same category + Variant Group will appear together in Select Options.</p>
       <CloudinaryUpload onUpload={addImage} accept="image/*" folder="products" label="Add Product Image" />
       {formData.images.length > 0 && (
         <div className="flex gap-2 flex-wrap">

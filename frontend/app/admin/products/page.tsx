@@ -77,6 +77,8 @@ export default function AdminProducts() {
             <tr>
               <th className="text-left p-4 font-cinzel text-xs tracking-widest uppercase text-gold">Name</th>
               <th className="text-left p-4 font-cinzel text-xs tracking-widest uppercase text-gold">Category</th>
+              <th className="text-left p-4 font-cinzel text-xs tracking-widest uppercase text-gold">Color</th>
+              <th className="text-left p-4 font-cinzel text-xs tracking-widest uppercase text-gold">Variant Group</th>
               <th className="text-left p-4 font-cinzel text-xs tracking-widest uppercase text-gold">Price</th>
               <th className="text-left p-4 font-cinzel text-xs tracking-widest uppercase text-gold">Featured</th>
               <th className="text-left p-4 font-cinzel text-xs tracking-widest uppercase text-gold">Actions</th>
@@ -87,6 +89,8 @@ export default function AdminProducts() {
               <tr key={product._id} className="border-b border-gold/10">
                 <td className="p-4 text-textPrimary">{product.name}</td>
                 <td className="p-4 text-textSecondary">{product.category}</td>
+                <td className="p-4 text-textSecondary">{product.color || '—'}</td>
+                <td className="p-4 text-textSecondary text-xs break-all">{product.variantGroup || '—'}</td>
                 <td className="p-4 text-textPrimary">{formatPrice(product.price)}</td>
                 <td className="p-4 text-textSecondary">{product.featured ? 'Yes' : 'No'}</td>
                 <td className="p-4 flex gap-2">

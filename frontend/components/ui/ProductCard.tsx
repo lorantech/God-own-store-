@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '@/types'
@@ -27,6 +27,7 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart()
   const { openQuickView, toggleWishlist, isWishlisted, toggleCompare, isCompared, openVariantPicker } = useShopUI()
   const prefersReduced = useReducedMotion()
+  const cardRef = useRef<HTMLDivElement>(null)
   const [loadingOptions, setLoadingOptions] = useState(false)
 
   const handleQuickAdd = (e: React.MouseEvent) => {
@@ -64,7 +65,7 @@ export default function ProductCard({ product }: ProductCardProps) {
           if (local.length > 1) variants = local
         }
       }
-      openVariantPicker(product, variants.length ? variants : [product])
+      openVariantPicker(product, variants.length ? variants : [product], cardRef.current?.getBoundingClientRect())
     } finally {
       setLoadingOptions(false)
     }
@@ -75,6 +76,7 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <motion.div
+      ref={cardRef}
       variants={prefersReduced ? {} : scaleIn}
       whileHover={prefersReduced ? {} : { y: -6 }}
       transition={{ duration: 0.3 }}

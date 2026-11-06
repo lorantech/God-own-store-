@@ -3,6 +3,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { Product } from '@/types'
 
+type VariantAnchor = { top: number; left: number; width: number; height: number }
+
 type ShopUIContextType = {
   wishlist: Product[]
   toggleWishlist: (p: Product) => void
@@ -14,8 +16,8 @@ type ShopUIContextType = {
   quickView: Product | null
   openQuickView: (p: Product) => void
   closeQuickView: () => void
-  variantPicker: { product: Product; variants: Product[] } | null
-  openVariantPicker: (product: Product, variants: Product[]) => void
+  variantPicker: { product: Product; variants: Product[]; anchor?: VariantAnchor | null } | null
+  openVariantPicker: (product: Product, variants: Product[], anchor?: VariantAnchor | null) => void
   closeVariantPicker: () => void
 }
 
@@ -35,7 +37,7 @@ export function ShopUIProvider({ children }: { children: React.ReactNode }) {
   const [wishlist, setWishlist] = useState<Product[]>([])
   const [compare, setCompare] = useState<Product[]>([])
   const [quickView, setQuickView] = useState<Product | null>(null)
-  const [variantPicker, setVariantPicker] = useState<{ product: Product; variants: Product[] } | null>(null)
+  const [variantPicker, setVariantPicker] = useState<{ product: Product; variants: Product[]; anchor?: VariantAnchor | null } | null>(null)
 
   useEffect(() => {
     setWishlist(read<Product[]>('gos_wishlist', []))
@@ -76,7 +78,7 @@ export function ShopUIProvider({ children }: { children: React.ReactNode }) {
       openQuickView: setQuickView,
       closeQuickView: () => setQuickView(null),
       variantPicker,
-      openVariantPicker: (product: Product, variants: Product[]) => setVariantPicker({ product, variants }),
+      openVariantPicker: (product: Product, variants: Product[], anchor?: VariantAnchor | null) => setVariantPicker({ product, variants, anchor: anchor || null }),
       closeVariantPicker: () => setVariantPicker(null),
     }),
     [wishlist, compare, quickView, variantPicker]
