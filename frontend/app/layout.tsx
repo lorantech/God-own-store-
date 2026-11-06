@@ -15,20 +15,22 @@ import { Toaster } from 'react-hot-toast'
 
 const cormorant = Cormorant_Garamond({ 
   subsets: ['latin'],
-  weight: ['400', '500', '600'],
-  style: ['italic'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
   variable: '--font-cormorant'
 })
 
 const cinzel = Cinzel({ 
   subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
   variable: '--font-cinzel'
 })
 
 const jost = Jost({ 
   subsets: ['latin'],
-  weight: ['300', '400', '500'],
+  weight: ['300', '400', '500', '600', '700'],
+  display: 'swap',
   variable: '--font-jost'
 })
 
