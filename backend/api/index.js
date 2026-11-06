@@ -11,21 +11,29 @@ const ceoCornerRoutes = require('../routes/ceoCorner.routes');
 const settingsRoutes = require('../routes/settings.routes');
 
 const app = express();
-connectDB();
 
-const allowed = (process.env.FRONTEND_URL || '').split(',').map((s) => s.trim()).filter(Boolean);
 app.use(
   cors({
     origin(origin, cb) {
+      const allowed = (process.env.FRONTEND_URL || '').split(',').map((s) => s.trim()).filter(Boolean);
       if (!origin) return cb(null, true); // server-to-server, curl, same-origin
       if (!allowed.length || allowed.includes(origin)) return cb(null, true);
       if (/^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin)) return cb(null, true);
+      if (/\.vercel\.app$/.test(new URL(origin).hostname)) return cb(null, true);
       return cb(null, false);
     },
     credentials: true,
   })
 );
 app.use(express.json({ limit: '2mb' }));
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    next(err);
+  }
+});
 
 app.get('/api/health', (req, res) => {
   res.json({ ok: true, service: 'gods-own-store-api', time: new Date().toISOString() });
