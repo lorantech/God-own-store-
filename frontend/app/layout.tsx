@@ -9,6 +9,7 @@ import Footer from '@/components/layout/Footer'
 import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp'
 import PageTransition from '@/components/layout/PageTransition'
 import QuickViewModal from '@/components/ui/QuickViewModal'
+import VariantPickerModal from '@/components/ui/VariantPickerModal'
 import CompareBar from '@/components/ui/CompareBar'
 import { Toaster } from 'react-hot-toast'
 
@@ -54,6 +55,7 @@ export default function RootLayout({
               <Footer />
               <FloatingWhatsApp />
               <QuickViewModal />
+              <VariantPickerModal />
               <CompareBar />
               <Toaster
                 position="bottom-right"

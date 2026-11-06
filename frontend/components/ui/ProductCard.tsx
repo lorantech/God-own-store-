@@ -1,11 +1,14 @@
 'use client'
 
+import { useState } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { Product } from '@/types'
 import { formatPrice } from '@/lib/utils'
 import { useCart } from '@/context/CartContext'
 import { useShopUI } from '@/context/ShopUIContext'
+import { api } from '@/lib/api'
+import { demoProducts } from '@/lib/categoryCatalog'
 import { motion, useReducedMotion } from 'framer-motion'
 import { scaleIn } from '@/lib/animations'
 import toast from 'react-hot-toast'
@@ -16,10 +19,15 @@ interface ProductCardProps {
   product: Product
 }
 
+function normalizeGroup(p: Product) {
+  return p.variantGroup || `${p.category}::${p.name.replace(/\s*\([^)]*\)\s*$/, '').trim()}`
+}
+
 export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart()
-  const { openQuickView, toggleWishlist, isWishlisted, toggleCompare, isCompared } = useShopUI()
+  const { openQuickView, toggleWishlist, isWishlisted, toggleCompare, isCompared, openVariantPicker } = useShopUI()
   const prefersReduced = useReducedMotion()
+  const [loadingOptions, setLoadingOptions] = useState(false)
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault()
@@ -31,6 +39,35 @@ export default function ProductCard({ product }: ProductCardProps) {
     e.preventDefault()
     e.stopPropagation()
     fn()
+  }
+
+  const handleSelectOptions = async (e: React.MouseEvent) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setLoadingOptions(true)
+    try {
+      let variants: Product[] = []
+      if (product._id.startsWith('demo-')) {
+        const group = normalizeGroup(product)
+        variants = demoProducts.filter((x) => x.category === product.category && normalizeGroup(x) === group)
+      } else {
+        try {
+          const group = product.variantGroup || ''
+          const qs = new URLSearchParams({ category: product.category })
+          if (group) qs.set('group', group)
+          const data = await api.get(`/api/products?${qs.toString()}`)
+          if (Array.isArray(data)) variants = group ? data : data.filter((x: Product) => normalizeGroup(x) === normalizeGroup(product))
+        } catch {}
+        if (variants.length <= 1) {
+          const group = normalizeGroup(product)
+          const local = demoProducts.filter((x) => x.category === product.category && normalizeGroup(x) === group)
+          if (local.length > 1) variants = local
+        }
+      }
+      openVariantPicker(product, variants.length ? variants : [product])
+    } finally {
+      setLoadingOptions(false)
+    }
   }
 
   const wished = isWishlisted(product._id)
@@ -109,10 +146,18 @@ export default function ProductCard({ product }: ProductCardProps) {
           <h3 className="font-cormorant text-lg text-textPrimary mb-1 hover:text-gold transition-colors">{product.name}</h3>
         </Link>
         {product.color && <p className="font-jost text-xs text-textSecondary mb-1">Color: {product.color}</p>}
-        <p className="font-jost text-gold text-sm">
+        <p className="font-jost text-gold text-sm mb-3">
           {formatPrice(product.discountPrice ?? product.price)}
           {product.discountPrice ? <span className="ml-2 text-textSecondary text-xs line-through">{formatPrice(product.price)}</span> : null}
         </p>
+        <button
+          type="button"
+          onClick={handleSelectOptions}
+          disabled={loadingOptions}
+          className="font-cinzel text-[10px] tracking-[0.22em] uppercase text-textSecondary hover:text-gold border-b border-gold/30 hover:border-gold transition-colors disabled:opacity-60"
+        >
+          {loadingOptions ? 'Loading…' : 'Select Options'}
+        </button>
       </div>
     </motion.div>
   )
