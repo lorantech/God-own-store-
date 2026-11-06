@@ -2,10 +2,14 @@ const mongoose = require('mongoose');
 
 const ReviewSchema = new mongoose.Schema({
   name: { type: String, required: true },
+  handle: { type: String, default: '' },
   rating: { type: Number, required: true, min: 1, max: 5 },
-  comment: { type: String },
+  title: { type: String, default: '' },
+  comment: { type: String, default: '' },
   type: { type: String, enum: ['text', 'video'], default: 'text' },
-  mediaUrl: { type: String },
+  image: { type: String, default: '' },
+  mediaUrl: { type: String, default: '' },
+  product: { type: String, default: '' },
   approved: { type: Boolean, default: false }
 }, { timestamps: true });
 

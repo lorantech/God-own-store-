@@ -7,16 +7,19 @@ interface AdminAuthContextType {
   login: (token: string) => void;
   logout: () => void;
   isAuthenticated: boolean;
+  ready: boolean;
 }
 
 const AdminAuthContext = createContext<AdminAuthContextType | undefined>(undefined);
 
 export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('adminToken');
     if (saved) setToken(saved);
+    setReady(true);
   }, []);
 
   const login = (newToken: string) => {
@@ -31,7 +34,7 @@ export const AdminAuthProvider = ({ children }: { children: React.ReactNode }) =
 
   return (
     <AdminAuthContext.Provider value={{
-      token, login, logout, isAuthenticated: !!token
+      token, login, logout, isAuthenticated: !!token, ready
     }}>
       {children}
     </AdminAuthContext.Provider>

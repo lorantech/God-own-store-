@@ -12,6 +12,10 @@
     "serverless-http": "^3.2.0"
   },
   "scripts": {
-    "seed": "node seed.js"
+    "dev": "node api/index.js",
+    "seed": "node seed.js",
+    "seed:products": "node seedProducts.js",
+    "seed:catalog": "node seedCatalog.js",
+    "admin:reset": "node resetAdmin.js"
   }
 }

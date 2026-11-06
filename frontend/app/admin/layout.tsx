@@ -1,32 +1,38 @@
 'use client';
 
 import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAdminAuth } from '@/context/AdminAuthContext';
 import AdminSidebar from '@/components/admin/AdminSidebar';
 
 export default function AdminLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  const { isAuthenticated } = useAdminAuth();
+  const { isAuthenticated, ready } = useAdminAuth();
   const router = useRouter();
+  const pathname = usePathname();
+  const isLogin = pathname === '/admin/login';
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      router.push('/admin/login');
+    if (ready && !isAuthenticated && !isLogin) {
+      router.replace('/admin/login');
     }
-  }, [isAuthenticated, router]);
+  }, [isAuthenticated, isLogin, ready, router]);
 
-  if (!isAuthenticated) {
-    return null;
+  if (isLogin) return <>{children}</>;
+
+  if (!ready) {
+    return <div className="min-h-screen bg-primary flex items-center justify-center text-textSecondary font-cinzel text-xs tracking-widest uppercase">Loading...</div>;
   }
 
+  if (!isAuthenticated) return null;
+
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-primary">
       <AdminSidebar />
-      <main className="flex-1 bg-primary p-8">{children}</main>
+      <main className="flex-1 min-w-0 p-4 md:p-8 overflow-x-auto">{children}</main>
     </div>
   );
 }

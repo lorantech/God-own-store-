@@ -27,24 +27,24 @@ export default function AdminProducts() {
   const handleSubmit = async (data: any) => {
     try {
       if (editingProduct) {
-        await api.put(/api/products/, data, token || '');
+        await api.put(`/api/products/${editingProduct._id}`, data, token || '');
         toast.success('Product updated');
       } else {
-        await api.post('/api/products', data);
+        await api.post('/api/products', data, token || '');
         toast.success('Product created');
       }
       setShowForm(false);
       setEditingProduct(undefined);
       fetchProducts();
-    } catch (error) {
-      toast.error('Error saving product');
+    } catch (error: any) {
+      toast.error(error?.message || 'Error saving product');
     }
   };
 
   const handleDelete = async (id: string) => {
     if (!confirm('Delete this product?')) return;
     try {
-      await api.delete(/api/products/, token || '');
+      await api.delete(`/api/products/${id}`, token || '');
       toast.success('Product deleted');
       fetchProducts();
     } catch (error) {

@@ -6,10 +6,12 @@ import { useAdminAuth } from '@/context/AdminAuthContext';
 import { api } from '@/lib/api';
 import GoldButton from '@/components/ui/GoldButton';
 import toast from 'react-hot-toast';
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 export default function AdminLogin() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const { login } = useAdminAuth();
   const router = useRouter();
@@ -22,8 +24,13 @@ export default function AdminLogin() {
       login(data.token);
       toast.success('Login successful');
       router.push('/admin/dashboard');
-    } catch (error) {
-      toast.error('Invalid credentials');
+    } catch (error: any) {
+      const msg = error?.message || 'Login failed';
+      if (msg === 'API request failed' || msg.includes('Failed to fetch') || msg.includes('Network')) {
+        toast.error('Cannot reach server. Start the backend and ensure /api is available.');
+      } else {
+        toast.error(msg);
+      }
     } finally {
       setLoading(false);
     }
@@ -49,6 +56,7 @@ export default function AdminLogin() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full bg-primary border border-gold/20 px-4 py-3 text-textPrimary focus:outline-none focus:border-gold"
+              autoComplete="username"
               required
             />
           </div>
@@ -56,13 +64,25 @@ export default function AdminLogin() {
             <label className="block font-cinzel text-xs tracking-widest uppercase text-gold mb-2">
               Password
             </label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full bg-primary border border-gold/20 px-4 py-3 text-textPrimary focus:outline-none focus:border-gold"
-              required
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full bg-primary border border-gold/20 px-4 py-3 pr-12 text-textPrimary focus:outline-none focus:border-gold"
+                autoComplete="current-password"
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((v) => !v)}
+                className="absolute right-0 top-0 h-full px-4 flex items-center justify-center text-[#C9A84C] hover:text-[#E2C27D] transition-colors"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+                title={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <FaEyeSlash size={18} className="pointer-events-none" /> : <FaEye size={18} className="pointer-events-none" />}
+              </button>
+            </div>
           </div>
           <GoldButton type="submit" className="w-full" disabled={loading}>
             {loading ? 'Logging in...' : 'Login'}
